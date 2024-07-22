@@ -19,12 +19,24 @@
             margin: 10px 0 5px;
             color: #555;
         }
-        input[type="text"], input[type="checkbox"] {
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 10px 0 10px;
+        }
+        .checkbox-container label {
+            margin: 0;
+            margin-right: 10px;
+        }
+        input[type="text"] {
             width: 100%;
             padding: 8px;
             margin: 5px 0 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
         }
         button {
             padding: 10px 15px;
@@ -49,8 +61,10 @@
     <h1>Configuration</h1>
     <label for="api-url">API URL</label>
     <input type="text" id="api-url">
-    <label for="use-streaming">Use Streaming</label>
-    <input type="checkbox" id="use-streaming">
+    <div class="checkbox-container">
+        <label for="use-streaming">Use Streaming</label>
+        <input type="checkbox" id="use-streaming">
+    </div>
     <button id="save-button">Save</button>
     <a href="sidepanel.html" class="back-link">Back to Book Buddy</a>
     <script src="config.js"></script>

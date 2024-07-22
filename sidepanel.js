@@ -171,6 +171,7 @@ function addStopButton() {
 
 // Function to remove stop button
 function removeStopButton() {
+  chrome.storage.session.set({ lastWord: '' });
   let stopButton = document.getElementById('stop-button');
   if (stopButton) {
     stopButton.remove();
