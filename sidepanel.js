@@ -63,9 +63,7 @@ function updateDefinition(word) {
     .catch(error => {
       console.log('Error:', error);
       removeStopButton(); // Remove stop button if there's an error
-      if (!isStopped) {
-        document.body.querySelector('#word-definition').innerText = 'Error fetching the definition. Please check the service, network, or cors problems';
-      }
+      document.body.querySelector('#word-definition').innerHTML = marked.parse(`Check if the Configuration for \`apiUrl\` is correct and if the \`Ollama\` service is running.`);
     });
 }
 
@@ -76,8 +74,13 @@ function fetchDefinitionStreaming(word, payload) {
     body: JSON.stringify(payload)
   })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
+      if (response.status == 403 || response.status == 404) {
+        document.body.querySelector('#word-definition').innerHTML = marked.parse(`HTTP Error: ${response.status}. Your Ollama service may not be running with the configuration  \`OLLAMA_ORIGINS=chrome-extension://*\` `);
+        return;
+      }
+      if (response.status !== 200) {
+        document.body.querySelector('#word-definition').innerHTML = marked.parse(`Oops! Wrong way, HTTP Error: ${response.status} ${response.statusText}`);
+        return;
       }
 
       const reader = response.body.getReader();
