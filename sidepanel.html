@@ -9,7 +9,9 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            min-height: 95vh;
         }
         h1 {
             color: #333;
@@ -19,6 +21,10 @@
             height: 1px;
             background: #ddd;
             margin: 20px 0;
+        }
+        #content {
+            background-color: #f4f4f9;
+            flex: 1;
         }
         #instruction-text {
             color: #555;
@@ -36,16 +42,41 @@
         #word-definition {
             color: #333;
         }
+        .config-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: block;
+            margin: 20px auto;
+            width: max-content;
+        }
+        .config-button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 5px 0 0 0;
+        }
     </style>
-    <!-- Include marked.js library -->
     <script src="marked.min.js"></script>
 </head>
 <body>
-    <p id="instruction-text">Select a word to see the definition.</p>
-    <div id="definition-container">
-        <h2 id="word-title"></h2>
-        <div id="word-definition"></div>
+    <div class="content">
+        <p id="instruction-text">Select a word to see the definition.</p>
+        <div id="definition-container">
+            <h2 id="word-title"></h2>
+            <div id="word-definition"></div>
+        </div>
+        <script src="sidepanel.js"></script>
     </div>
-    <script src="sidepanel.js"></script>
+    <div class="footer">
+        <a href="config.html" class="config-button">Configuration</a>
+    </div>
 </body>
 </html>

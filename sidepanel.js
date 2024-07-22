@@ -1,6 +1,5 @@
-
 chrome.storage.session.get('lastWord', ({ lastWord }) => {
-  updateDefinition(lastWord);
+  loadConfiguration().then(() => updateDefinition(lastWord));
 });
 
 chrome.storage.session.onChanged.addListener((changes) => {
@@ -10,20 +9,32 @@ chrome.storage.session.onChanged.addListener((changes) => {
     return;
   }
 
-  updateDefinition(lastWordChange.newValue);
+  loadConfiguration().then(() => updateDefinition(lastWordChange.newValue));
 });
+
+let apiUrl = 'http://localhost:11434/api/chat';
+let useStreaming = true;
+
+function loadConfiguration() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['apiUrl', 'useStreaming'], function(result) {
+      if (result.apiUrl) {
+        apiUrl = result.apiUrl;
+      }
+      if (result.useStreaming !== undefined) {
+        useStreaming = result.useStreaming;
+      }
+      resolve();
+    });
+  });
+}
 
 function updateDefinition(word) {
   if (!word) return;
 
-  // Hide instructions.
   document.body.querySelector('#instruction-text').style.display = 'none';
-
-  // Show word and definition.
   document.body.querySelector('#word-title').innerText = word;
-  
-  // Prepare the request payload with system instruction
-  useStreaming = true
+
   const payload = {
     model: "llama3",
     messages: [
@@ -39,19 +50,17 @@ function updateDefinition(word) {
     "stream": useStreaming
   };
 
- // Choose the appropriate function based on useStreaming
- const fetchFunction = useStreaming ? fetchDefinitionStreaming : fetchDefinitionNonStreaming;
+  const fetchFunction = useStreaming ? fetchDefinitionStreaming : fetchDefinitionNonStreaming;
 
- // Fetch the definition using the selected function
- fetchFunction(word, payload)
-   .catch(error => {
-     console.error('Error:', error);
-     document.body.querySelector('#word-definition').innerText = 'Error fetching the definition.';
-   });
+  fetchFunction(word, payload)
+    .catch(error => {
+      console.log('Error:', error);
+      document.body.querySelector('#word-definition').innerText = 'Error fetching the definition. Please check the service, network, or cors problems';
+    });
 }
 
 function fetchDefinitionStreaming(word, payload) {
-  return fetch('http://192.168.0.115:11434/api/chat', {
+  return fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -68,7 +77,6 @@ function fetchDefinitionStreaming(word, payload) {
 
       return reader.read().then(function processText({ done, value }) {
         if (done) {
-          // Handle final part of the response
           if (accumulatedText) {
             try {
               const finalData = JSON.parse(accumulatedText);
@@ -77,28 +85,23 @@ function fetchDefinitionStreaming(word, payload) {
                 document.body.querySelector('#word-definition').innerHTML = marked.parse(contentCache);
               }
             } catch (e) {
-              console.error('Failed to parse final JSON:', e);
+              console.log('Failed to parse final JSON:', e);
               document.body.querySelector('#word-definition').innerText = 'Error parsing final response.';
             }
           }
           return;
         }
 
-        // Decode and accumulate text
         accumulatedText += decoder.decode(value, { stream: true });
 
-        // Process each chunk
         try {
           const json = JSON.parse(accumulatedText);
           if (json.message && json.message.role === "assistant") {
-            // Append the content to existing content
             contentCache += json.message.content;
             document.body.querySelector('#word-definition').innerHTML = marked.parse(contentCache);
-            // Clear accumulated text to prepare for the next chunk
             accumulatedText = '';
           }
         } catch (e) {
-          // Handle incomplete JSON
         }
 
         return reader.read().then(processText);
@@ -106,9 +109,8 @@ function fetchDefinitionStreaming(word, payload) {
     });
 }
 
-
 function fetchDefinitionNonStreaming(word, payload) {
-  return fetch('http://192.168.0.115:11434/api/chat', {
+  return fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
