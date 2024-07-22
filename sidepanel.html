@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Buddy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 20px 0;
+        }
+        #instruction-text {
+            color: #555;
+            font-style: italic;
+        }
+        #definition-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #word-title {
+            color: #007BFF;
+        }
+        #word-definition {
+            color: #333;
+        }
+    </style>
+    <!-- Include marked.js library -->
+    <script src="marked.min.js"></script>
+</head>
+<body>
+    <p id="instruction-text">Select a word to see the definition.</p>
+    <div id="definition-container">
+        <h2 id="word-title"></h2>
+        <div id="word-definition"></div>
+    </div>
+    <script src="sidepanel.js"></script>
+</body>
+</html>
