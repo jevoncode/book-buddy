@@ -92,38 +92,40 @@ function fetchDefinitionStreaming(word, payload) {
           return;
         }
         if (done) {
-          if (accumulatedText) {
-            try {
-              const finalData = JSON.parse(accumulatedText);
-              if (finalData.done) {
-                contentCache += finalData.message.content;
-                document.body.querySelector('#word-definition').innerHTML = marked.parse(contentCache);
-              }
-            } catch (e) {
-              console.log('Failed to parse final JSON:', e);
-              document.body.querySelector('#word-definition').innerText = 'Error parsing final response.';
-            }
-          }
+          contentCache = processAccumulatedText(accumulatedText, contentCache);
           removeStopButton(); // Remove stop button when done
           return;
         }
 
-        accumulatedText += decoder.decode(value, { stream: true });
-
-        try {
-          const json = JSON.parse(accumulatedText);
-          if (json.message && json.message.role === "assistant") {
-            contentCache += json.message.content;
-            document.body.querySelector('#word-definition').innerHTML = marked.parse(contentCache);
-            accumulatedText = '';
-          }
-        } catch (e) {
-        }
+        accumulatedText = decoder.decode(value, { stream: true });
+        contentCache = processAccumulatedText(accumulatedText, contentCache);
 
         return reader.read().then(processText);
       });
     });
 }
+
+function processAccumulatedText(text, cache) {
+  let startIndex = 0;
+  let endIndex;
+  while ((endIndex = text.indexOf('\n', startIndex)) !== -1) {
+    const jsonStr = text.slice(startIndex, endIndex).trim();
+    startIndex = endIndex + 1;
+    if (jsonStr) {
+      try {
+        const json = JSON.parse(jsonStr);
+        if (json.message && json.message.role === "assistant") {
+          cache += json.message.content;
+          document.querySelector('#word-definition').innerHTML = marked.parse(cache);
+        }
+      } catch (e) {
+        console.log('Failed to parse JSON:', e);
+      }
+    }
+  }
+  return cache;
+}
+
 
 function fetchDefinitionNonStreaming(word, payload) {
   return fetch(apiUrl, {
