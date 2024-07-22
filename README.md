@@ -1,3 +1,4 @@
+[![license badge](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
 # Book Buddy
 
@@ -20,7 +21,7 @@ git clone https://github.com/jevoncode/book-buddy.git
 
 You should now see `Book Buddy 0.1` in your list of extensions. To use it, visit any web page, select the text you want more information about or are confused about, right-click, and choose `Hey! Buddy` from the menu. This will use the extension to provide an explanation.
 
-# Additional Configuration
+# Additional
 
 ## Handling 403 Forbidden Errors from Ollama
 
@@ -28,3 +29,4 @@ To avoid 403 Forbidden errors, run Ollama with the following environment variabl
 ```bash
 OLLAMA_ORIGINS=chrome-extension://* ollama serve
 ```
+
