@@ -18,7 +18,7 @@ git clone https://github.com/jevoncode/book-buddy.git
 
 4. (Optional) In the side panel, you can configure the Ollama API URL. The default is `http://localhost:11434/api/chat`.
 
-You should now see `Book Buddy 0.1` in your extensions. Go to any web page, select the text you want to learn more about or are confused about, and use the extension to get an explanation.
+You should now see `Book Buddy 0.1` in your list of extensions. To use it, visit any web page, select the text you want more information about or are confused about, right-click, and choose `Hey! Buddy` from the menu. This will use the extension to provide an explanation.
 
 # Additional Configuration
 

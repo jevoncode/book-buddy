@@ -1,7 +1,7 @@
 function setupContextMenu() {
   chrome.contextMenus.create({
     id: 'define-word',
-    title: 'Ask',
+    title: 'Hey! Buddy',
     contexts: ['selection']
   });
 }
