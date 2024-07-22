@@ -1,3 +1,5 @@
+let isStopped = false;
+
 chrome.storage.session.get('lastWord', ({ lastWord }) => {
   loadConfiguration().then(() => updateDefinition(lastWord));
 });
@@ -35,6 +37,8 @@ function updateDefinition(word) {
   document.body.querySelector('#instruction-text').style.display = 'none';
   document.body.querySelector('#word-title').innerText = word;
 
+  addStopButton(); // Add stop button dynamically
+
   const payload = {
     model: "llama3",
     messages: [
@@ -50,12 +54,18 @@ function updateDefinition(word) {
     "stream": useStreaming
   };
 
+  document.body.querySelector('#word-definition').innerHTML = "processing...";
+  isStopped = false; // Reset stop flag
   const fetchFunction = useStreaming ? fetchDefinitionStreaming : fetchDefinitionNonStreaming;
 
   fetchFunction(word, payload)
+    .then(() => removeStopButton()) // Remove stop button after processing is done
     .catch(error => {
       console.log('Error:', error);
-      document.body.querySelector('#word-definition').innerText = 'Error fetching the definition. Please check the service, network, or cors problems';
+      removeStopButton(); // Remove stop button if there's an error
+      if (!isStopped) {
+        document.body.querySelector('#word-definition').innerText = 'Error fetching the definition. Please check the service, network, or cors problems';
+      }
     });
 }
 
@@ -76,6 +86,11 @@ function fetchDefinitionStreaming(word, payload) {
       let contentCache = '';
 
       return reader.read().then(function processText({ done, value }) {
+        if (isStopped) {
+          document.body.querySelector('#word-definition').innerHTML = "Processing stopped.";
+          removeStopButton(); // Remove stop button when stopped
+          return;
+        }
         if (done) {
           if (accumulatedText) {
             try {
@@ -89,6 +104,7 @@ function fetchDefinitionStreaming(word, payload) {
               document.body.querySelector('#word-definition').innerText = 'Error parsing final response.';
             }
           }
+          removeStopButton(); // Remove stop button when done
           return;
         }
 
@@ -117,6 +133,11 @@ function fetchDefinitionNonStreaming(word, payload) {
   })
     .then(response => response.json())
     .then(data => {
+      if (isStopped) {
+        document.body.querySelector('#word-definition').innerHTML = "Processing stopped.";
+        removeStopButton(); // Remove stop button when stopped
+        return;
+      }
       if (data.message && data.message.role === "assistant") {
         const markdownContent = data.message.content;
         const htmlContent = marked.parse(markdownContent);
@@ -125,5 +146,33 @@ function fetchDefinitionNonStreaming(word, payload) {
         document.body.querySelector('#word-definition').innerText =
           `Unknown word! Supported words: ${Object.keys(words).join(', ')}`;
       }
+      removeStopButton(); // Remove stop button when done
     });
+}
+
+// Function to stop the processing
+function stopProcessing() {
+  isStopped = true;
+  document.body.querySelector('#word-definition').innerHTML = "Processing stopped.";
+  removeStopButton(); // Remove stop button when stopped
+}
+
+// Function to add stop button dynamically
+function addStopButton() {
+  let stopButton = document.getElementById('stop-button');
+  if (!stopButton) {
+    stopButton = document.createElement('button');
+    stopButton.id = 'stop-button';
+    stopButton.innerText = 'Stop';
+    stopButton.addEventListener('click', stopProcessing);
+    document.getElementById('stop-content').appendChild(stopButton);
+  }
+}
+
+// Function to remove stop button
+function removeStopButton() {
+  let stopButton = document.getElementById('stop-button');
+  if (stopButton) {
+    stopButton.remove();
+  }
 }
