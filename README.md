@@ -22,6 +22,7 @@ git clone https://github.com/jevoncode/book-buddy.git
 You should now see `Book Buddy 0.1` in your list of extensions. To use it, visit any web page, select the text you want more information about or are confused about, right-click, and choose `Hey! Buddy` from the menu. This will use the extension to provide an explanation.
 
 ## Example
+![example2](./example2.gif)
 ![example1](./example1.png)
 
 # Additional
