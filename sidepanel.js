@@ -18,12 +18,16 @@ let apiUrl = 'http://localhost:11434/api/chat';
 let useStreaming = true;
 // Initialize chat history
 let chatHistory = [];
+let modelName = 'llama3'
 
 function loadConfiguration() {
   return new Promise((resolve) => {
-    chrome.storage.local.get(['apiUrl', 'useStreaming'], function(result) {
+    chrome.storage.local.get(['apiUrl', 'useStreaming', 'modelName'], function(result) {
       if (result.apiUrl) {
         apiUrl = result.apiUrl;
+      }
+      if (result.modelName) {
+        modelName = result.modelName;
       }
       if (result.useStreaming !== undefined) {
         useStreaming = result.useStreaming;
@@ -42,7 +46,7 @@ function updateDefinition(word) {
   addStopButton(); // Add stop button dynamically
 
   const payload = {
-    model: "llama3",
+    model: modelName,
     messages: [
       {
         role: "system",
@@ -79,7 +83,7 @@ function fetchDefinitionStreaming(word, payload) {
   })
     .then(response => {
       if (response.status == 403 || response.status == 404) {
-        document.body.querySelector('#word-definition').innerHTML = marked.parse(`HTTP Error: ${response.status}. Your Ollama service may not be running with the configuration  \`OLLAMA_ORIGINS=chrome-extension://*\` `);
+        document.body.querySelector('#word-definition').innerHTML = marked.parse(`HTTP Error: ${response.status}. Your Ollama service may not be running with the configuration  \`OLLAMA_ORIGINS=chrome-extension://*\` or the model \`${modelName}\` is not available (try updating your Ollama service or checking the model name)`);
         return;
       }
       if (response.status !== 200) {

@@ -19,7 +19,7 @@ function sendMessage() {
 
     // Prepare the request payload for the Ollama chat API
     const payload = {
-        model: 'llama3', // Replace with your model name
+        model: modelName, // Replace with your model name
         messages: chatHistory,
         stream: useStreaming
     };
