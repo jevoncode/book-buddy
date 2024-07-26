@@ -63,6 +63,49 @@
             margin-top: auto;
             padding: 5px 0 0 0;
         }
+        /* Chat container styles */
+        #chat-container {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+        #chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .user {
+            text-align: right;
+        }
+        .bot {
+            text-align: left;
+        }
+        #input-container {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        #send-button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
     </style>
     <script src="marked.min.js"></script>
 </head>
@@ -75,7 +118,18 @@
             <div id="stop-content"></div>
             <div id="word-definition"></div>
         </div>
+
+        <!-- Chat container -->
+        <div id="chat-container">
+            <div id="chat-box"></div>
+            <div id="input-container">
+                <input type="text" id="user-input" placeholder="Remember better by asking some questions...">
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+
         <script src="sidepanel.js"></script>
+        <script src="chat.js"></script>
     </div>
     <div class="footer">
         <a href="config.html" class="config-button">Configuration</a>

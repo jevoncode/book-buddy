@@ -10,12 +10,14 @@ chrome.storage.session.onChanged.addListener((changes) => {
   if (!lastWordChange) {
     return;
   }
-
+  
   loadConfiguration().then(() => updateDefinition(lastWordChange.newValue));
 });
 
 let apiUrl = 'http://localhost:11434/api/chat';
 let useStreaming = true;
+// Initialize chat history
+let chatHistory = [];
 
 function loadConfiguration() {
   return new Promise((resolve) => {
@@ -53,6 +55,8 @@ function updateDefinition(word) {
     ],
     "stream": useStreaming
   };
+
+  chatHistory = payload.messages
 
   document.body.querySelector('#word-definition').innerHTML = "processing...";
   isStopped = false; // Reset stop flag
@@ -96,6 +100,7 @@ function fetchDefinitionStreaming(word, payload) {
         }
         if (done) {
           contentCache = processAccumulatedText(accumulatedText, contentCache);
+          chatHistory.push({ role: 'assistant', content: contentCache });
           removeStopButton(); // Remove stop button when done
           return;
         }
@@ -145,6 +150,7 @@ function fetchDefinitionNonStreaming(word, payload) {
       }
       if (data.message && data.message.role === "assistant") {
         const markdownContent = data.message.content;
+        chatHistory.push({ role: 'assistant', content: markdownContent });
         const htmlContent = marked.parse(markdownContent);
         document.body.querySelector('#word-definition').innerHTML = htmlContent;
       } else {
