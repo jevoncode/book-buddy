@@ -48,7 +48,7 @@ function handleStreamingResponse(payload) {
         return reader.read().then(function processText({ done, value }) {
             if (done) {
                 // Finalize response processing
-                addMessage('bot', responseText, true);
+                addMessage('bot' + chatHistory.length, responseText, true);
                 chatHistory.push({ role: 'assistant', content: responseText });
                 return;
             }
@@ -62,7 +62,7 @@ function handleStreamingResponse(payload) {
                     const data = JSON.parse(line);
                     if (data.message && data.message.content) {
                         responseText += data.message.content;
-                        addMessage('bot', responseText, true);
+                        addMessage('bot' + chatHistory.length, responseText, true);
                     }
                 } catch (e) {
                     console.error('Error parsing JSON chunk:', e);
@@ -75,7 +75,7 @@ function handleStreamingResponse(payload) {
     })
     .catch(error => {
         console.error('Error:', error);
-        addMessage('bot', 'Sorry, something went wrong.');
+        addMessage('bot' + chatHistory.length, 'Sorry, something went wrong.');
     });
 }
 
@@ -92,14 +92,14 @@ function handleNonStreamingResponse(payload) {
         if (data.message && data.message.content) {
             // Add the assistant's response to the chat history
             chatHistory.push({ role: 'assistant', content: data.message.content });
-            addMessage('bot', data.message.content);
+            addMessage('bot' + chatHistory.length, data.message.content);
         } else {
-            addMessage('bot', 'Sorry, I didn\'t understand that.');
+            addMessage('bot' + chatHistory.length, 'Sorry, I didn\'t understand that.');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        addMessage('bot', 'Sorry, something went wrong.');
+        addMessage('bot' + chatHistory.length, 'Sorry, something went wrong.');
     });
 }
 

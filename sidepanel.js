@@ -61,6 +61,8 @@ function updateDefinition(word) {
   };
 
   chatHistory = payload.messages
+  const chatBox = document.getElementById('chat-box');
+  chatBox.innerHTML = ''
 
   document.body.querySelector('#word-definition').innerHTML = "processing...";
   isStopped = false; // Reset stop flag
