@@ -33,7 +33,7 @@ function sendMessage() {
 }
 
 function handleStreamingResponse(payload) {
-    fetch('http://localhost:11434/api/chat', {
+    fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
