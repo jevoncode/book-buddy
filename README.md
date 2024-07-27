@@ -2,7 +2,7 @@
 
 # Book Buddy
 
-Book Buddy is a Chrome extension with a simple feature: select text and use Ollama to explain it.
+Book Buddy is a Chrome extension with a simple feature: select text and use Ollama to explain it. Yes! Like a dictionary.
 
 ## Steps to Install
 
@@ -12,8 +12,9 @@ This extension requires Ollama to be installed first.
 ```bash
 git clone https://github.com/jevoncode/book-buddy.git
 ```
+Or you can download it from [here](https://github.com/jevoncode/book-buddy/archive/master.zip).
 
-2. In Chrome, navigate to the extensions management page by typing `chrome://extensions/` in the address bar.
+2. In Chrome, navigate to the extensions management page by typing `chrome://extensions/` in the address bar (you need to switch to Developer Model).
 
 3. Click on `Load unpacked` and select the directory you just cloned.
 
